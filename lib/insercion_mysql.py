@@ -38,9 +38,44 @@ def vaciar_tabla():
         conn.close()  # Cierra la conexión a la base de datos
 
 
+def insert_emissions(df):
+    sql = """INSERT INTO dataset_fao(
+                codigo_area, area,
+                codigo_elemento, elemento,
+                codigo_producto, producto,
+                anio, unidad, valor,
+                simbolo, descripcion_simbolo)
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+
+    columnas = ['codigo_area', 'area', 'codigo_elemento', 'elemento',
+                'codigo_producto', 'producto', 'anio', 'unidad',
+                'valor', 'simbolo', 'descripcion_simbolo']
+
+    # Lista de tuplas, en el orden correcto — sin iterrows
+    datos = [tuple(x) for x in df[columnas].itertuples(index=False, name=None)]
+
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.executemany(sql, datos)   # una sola llamada
+        conn.commit()                     # un solo commit
+        print(f'{cursor.rowcount} filas insertadas')
+    except Error as e:
+        conn.rollback()
+        print(f'Error: {e}')
+    finally:
+        conn.close()
 
 
-def insert_emission(emission):
+
+
+
+
+
+
+'''
+
+def insert_emissions_old(df):
     try:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
@@ -84,3 +119,4 @@ def insert_emission(emission):
     finally:
         conn.close() 
 
+'''

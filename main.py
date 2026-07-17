@@ -3,7 +3,7 @@ from lib.limpieza_datos import eliminar_columnas,normalizar_columnas
 import pandas as pd
 import mysql.connector
 from mysql.connector import Error
-from lib.insercion_mysql import insert_emission, vaciar_tabla
+from lib.insercion_mysql import insert_emissions, vaciar_tabla
 
 print(df_continentes.head())  # Muestra las primeras filas del DataFrame original
 
@@ -23,9 +23,4 @@ vaciar_tabla()  # Llama a la función para vaciar la tabla antes de insertar nue
 
 
 
-#insert_emission(df_normalizado.iloc[0].to_dict()) #inserción de un registro en la base de datos, se pasa a diccionario pq la función insert_emission espera un diccionario
-
-#inserción de todos los registros en la base de datos
-for index, row in df_normalizado.iterrows():
-    #print(index)
-    insert_emission(row.to_dict())  
+insert_emissions(df_normalizado) #inserción de todos los registros en la base de datos
