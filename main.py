@@ -1,3 +1,8 @@
+#Datos: https://www.fao.org/faostat/es/#data/GLE
+
+
+
+
 from lib.carga_datos import df_continentes 
 from lib.limpieza_datos import eliminar_columnas,normalizar_columnas
 import pandas as pd
