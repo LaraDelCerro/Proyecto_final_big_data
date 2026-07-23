@@ -1,11 +1,25 @@
 import mysql.connector
 from mysql.connector import Error
-import pandas as pd
+from dotenv import load_dotenv
+import os
+
+load_dotenv(override=True)
+
+
 
 ### Inserción de datos en MySQL ### 
 
 #nos conectamos a mySQL
 def get_connection():
+    """
+    Establece una conexión con la base de datos MySQL utilizando la
+    configuración definida en DB_CONFIG.
+
+    Retorna:
+    mysql.connector.connection.MySQLConnection: Objeto de conexión con la
+    base de datos si la conexión se establece correctamente.
+    None: Si ocurre un error durante la conexión.
+    """
     try:
         return mysql.connector.connect(**DB_CONFIG)
         #con ** pasamos como param a la fcón los valores del diccionario
@@ -15,17 +29,35 @@ def get_connection():
         return None
 
 
-
+#INFO DB para conectar con mySQL
+'''
 DB_CONFIG = {
-    'host' : 'localhost',
+    'host' : os.getenv('MYSQL_HOST'),
     'port' : 3306,
-    'user': 'root',
-    'password': 'larisis5087',
-    'database': 'proyecto_final'
+    'user': os.getenv('MYSQL_USER'),
+    'password': os.getenv('MYSQL_PASSWORD'),
+    'database': os.getenv('MYSQL_DATABASE')
+}
+'''
+
+# INFO DB para volcar los datos a Aiven (online)
+DB_CONFIG = {
+    'host' : os.getenv('MYSQL_HOST_A'),
+    'port' : os.getenv('MYSQL_PORT_A'),
+    'user': os.getenv('MYSQL_USER_A'),
+    'password': os.getenv('MYSQL_PASSWORD_A'),
+    'database': os.getenv('MYSQL_DATABASE_A')
 }
 
 
+
 def vaciar_tabla():
+    """
+    Elimina todos los registros de la tabla 'dataset_fao'.
+
+    Retorna:
+    None: Vacía la tabla y confirma los cambios en la base de datos.
+    """
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -39,6 +71,18 @@ def vaciar_tabla():
 
 
 def insert_emissions(df):
+    """
+    Inserta los datos de un DataFrame en la tabla 'dataset_fao' de la
+    base de datos MySQL.
+
+    Parámetros:
+    df (pd.DataFrame): DataFrame que contiene los datos de emisiones a
+    insertar.
+
+    Retorna:
+    None: Inserta los registros en la base de datos y confirma los
+    cambios si la operación se realiza correctamente.
+    """
     sql = """INSERT INTO dataset_fao(
                 codigo_area, area,
                 codigo_elemento, elemento,
@@ -73,50 +117,3 @@ def insert_emissions(df):
 
 
 
-'''
-
-def insert_emissions_old(df):
-    try:
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute ("""insert 
-                       into dataset_fao(
-                       codigo_area, 
-                       area, 
-                       codigo_elemento, 
-                       elemento, 
-                       codigo_producto, 
-                       producto, 
-                       anio, 
-                       unidad,
-                       valor,
-                        simbolo,
-                        descripcion_simbolo) 
-                       values
-                       (%s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)""",(
-                           emission['codigo_area'],
-                           emission['area'],
-                           emission['codigo_elemento'],
-                           emission['elemento'],
-                           emission['codigo_producto'],
-                           emission['producto'],
-                           emission['anio'],
-                           emission['unidad'],
-                           emission['valor'],
-                           emission['simbolo'],
-                           emission['descripcion_simbolo'])
-                        )
-                        
-        conn.commit()
-        #para sacar el libro que acabo de insertar necesito el id para consultar por get_by_id
-        #last_id= cursor.lastrowid #te da el último id
-        #result = get_book_by_id(last_id)
-        #return result
-
-    except Error as e:
-        print(f'Error: {e}')
-        return None
-    finally:
-        conn.close() 
-
-'''

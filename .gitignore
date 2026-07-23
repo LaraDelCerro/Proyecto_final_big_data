@@ -1,1 +1,42 @@
-.venv
+# Credenciales
+.env
+.env.local
+*.cnf
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# Datos
+*.csv
+*.sql
+*.sqlite
+*.db
+*.parquet
+*.xlsx
+data/raw/
+
+# Salidas generadas
+*.html
+outputs/
+figuras/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp

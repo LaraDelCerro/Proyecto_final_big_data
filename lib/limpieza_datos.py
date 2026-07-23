@@ -11,16 +11,17 @@ def eliminar_columnas(df, columnas):
     """
     return df.drop(columns=columnas, errors='ignore')
 
-def ver_cabecera(df):
-    """
-    Muestra la cabecera de un DataFrame.
-
-    Parámetros:
-    df (pd.DataFrame): El DataFrame del cual se mostrará la cabecera.
-    """
-    print(df.head())
 
 def normalizar_columnas(df):
+    """
+    Renombra las columnas de un DataFrame con nombres estandarizados.
+
+    Parámetros:
+    df (pd.DataFrame): DataFrame cuyas columnas se desean renombrar.
+
+    Retorna:
+    pd.DataFrame: DataFrame con los nombres de las columnas normalizados.
+    """
     nombre_columnas_normalizadas = [  'codigo_area', 
                        'area', 
                        'codigo_elemento', 

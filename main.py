@@ -1,8 +1,6 @@
 #Datos: https://www.fao.org/faostat/es/#data/GLE
 
 
-
-
 from lib.carga_datos import df_continentes 
 from lib.limpieza_datos import eliminar_columnas,normalizar_columnas
 import pandas as pd
@@ -15,11 +13,10 @@ print(df_continentes.head())  # Muestra las primeras filas del DataFrame origina
 df_continente_sin_columnas= eliminar_columnas(df_continentes, ['Código del ámbito', 'Ámbito', 'Código del año', 'Código fuente', 'Fuente', 'Nota'])  # Elimina las columnas especificadas
 
 
-print(df_continente_sin_columnas.head())
+print(df_continente_sin_columnas.head()) #Compruebo que las columnas han sido eliminadas
 
-#ver_cabecera(df_continente_sin_columnas)  # Muestra la cabecera del DataFrame después de la limpieza
 
-#convertir a csv
+#convertir a csv. Genera un archivo continente.csv
 df_continente_sin_columnas.to_csv('./continentes.csv', index=False)
 
 df_normalizado = normalizar_columnas(df_continente_sin_columnas)
