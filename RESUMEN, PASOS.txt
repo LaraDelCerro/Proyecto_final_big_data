@@ -1,0 +1,17 @@
+RESUMEN, PASOS:
+
+1. Parto de 5 archivos csv, primera inspección visual(qué datos tengo, de qué tipo, nombre de las columnas, valores nulos...La fuente de datos es: https://www.fao.org/faostat/es/#data/GLE
+
+2. Carga: Con la librería pandas creo un df para cada continente y a continuación otro con el que trabajaré que es la unión de los 5. 
+
+
+3. Limpieza: Eliminar columnas que no aportan y normalizar el nombre de todas las columnas
+
+4. Inserción_mysql: Conexión con SQL con la BD. proyecto_final, que tiene una única tabla dataset_fao. Vaciar la tabla por si acaso. LLenar la tabla con la función insert_emissions, pasándole el df_normalizado. 
+
+5. Visualización de gráficos desde Python consultando MySQL. En el fichero emisiones.ipynb de jupyter notebook. 
+	5.1. Nueva columna: CO2eq = 28*CH4 + 265*N20
+	5.2. 
+
+
+6. Conexión con Power BI
