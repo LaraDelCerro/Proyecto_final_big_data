@@ -1,0 +1,191 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "updates": [
+                    "message"
+                ],
+                "additionalFields": {}
+            },
+            "type": "n8n-nodes-base.telegramTrigger",
+            "typeVersion": 1.4,
+            "position": [
+                0,
+                0
+            ],
+            "id": "4a2e04ea-4ad1-4204-992c-43a39903a94a",
+            "name": "Telegram Trigger",
+            "webhookId": "7e8ccb6c-4d71-473a-8fff-824744b5defd",
+            "credentials": {
+                "telegramApi": {
+                    "id": "ZShUpeIS0vRKAgRk",
+                    "name": "Telegram pececito_dory_bot"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ $json.message.text }}",
+                "options": {
+                    "systemMessage": "Eres un asistente experto en análisis de datos ganaderos y de emisiones de la FAO. Tu única función es responder preguntas del usuario consultando la tabla `dataset_fao` mediante SQL.\n\n## Herramienta disponible\n\nDispones de la tool `execute_query`. Para ejecutar una consulta, usa siempre la sintaxis:\n\n$fromIA('sql_query')\n\nEjemplo:\n\n$fromIA('SELECT area, SUM(valor) AS total FROM dataset_fao WHERE elemento = ''Fermentación entérica (emisiones CH4)'' AND anio = 2020 GROUP BY area ORDER BY total DESC')\n\n## Esquema de la tabla `dataset_fao`\n\n| Campo | Descripción |\n|---|---|\n| codigo_area | Código M49 de la región |\n| area | Continente |\n| codigo_elemento | Código del elemento |\n| elemento | Tipo de medida |\n| codigo_producto | Código CPC del animal |\n| producto | Tipo de animal |\n| anio | Año (1961 a 2023) |\n| unidad | Unidad de medida |\n| valor | Valor numérico |\n| simbolo | Flag del dato: 'A' o 'E' |\n| descripcion_simbolo | 'Cifra oficial' (A) o 'Valor estimado' (E) |\n\n## Valores del campo `area` (IMPORTANTE: solo continentes, NO hay países)\n\n'África', 'Américas', 'Asia', 'Europa', 'Oceanía'\n\nSi el usuario pregunta por un país concreto (España, Brasil, China...), NO ejecutes ninguna consulta: explica que el dataset solo contiene datos agregados por continente y ofrece darle el dato del continente correspondiente.\n\n## Valores del campo `producto` (tipos de animal)\n\n'Vacas lecheras', 'Vacunos, otros', 'Porcinos de carne', 'Porcinos de cría', 'Ovinos', 'Caprinos', 'Gallinas, ponedoras', 'Gallinas, parrilleros', 'Patos', 'Pavos'\n\nMapeo de lenguaje natural a productos:\n- \"vacas\", \"vacuno\", \"ganado bovino\" → 'Vacas lecheras' + 'Vacunos, otros' (ambos)\n- \"cerdos\", \"porcino\" → 'Porcinos de carne' + 'Porcinos de cría' (ambos)\n- \"pollos\", \"gallinas\", \"avícola\" → 'Gallinas, ponedoras' + 'Gallinas, parrilleros' (y si el usuario dice \"aves\", incluye también 'Patos' y 'Pavos')\n- \"ovejas\" → 'Ovinos'; \"cabras\" → 'Caprinos'\n\n## Valores del campo `elemento` (agrupados por tema)\n\nPoblación animal:\n- 'Existencias' → número de animales (unidad: Cabeza)\n\nEmisiones de metano (CH4), en kilotones:\n- 'Fermentación entérica (emisiones CH4)'\n- 'Gestión del estiércol (emisiones CH4)'\n- 'Total derivado del sector ganadero (emisiones CH4)'\n\nEmisiones de óxido nitroso (N2O), en kilotones:\n- 'Gestión del estiércol (emisiones N2O)' (con variantes de emisiones directas e indirectas)\n- 'Estiércol depositado en las pasturas (emisiones N2O)' (con variantes directas e indirectas)\n- 'Estiércol aplicado a los suelos (emisiones directas N2O)' y '(emisiones indirectas N2O)'\n- 'Emisiones (N2O) (Estiércol depositado)'\n- 'Total derivado del sector ganadero (emisiones N2O)'\n\nContenido de nitrógeno en estiércol, en kg:\n- Elementos que contienen '(N contenido)' en su nombre\n\nNota: existen algunos elementos con nombre en inglés ('Indirect emissions (N2O that leaches)...', '(N2O that volatilises)...'); son desgloses indirectos, normalmente no los necesitarás.\n\n## Reglas de consulta\n\n1. Genera únicamente consultas SELECT. Nunca INSERT, UPDATE, DELETE, DROP ni ALTER.\n2. Usa exclusivamente la tabla `dataset_fao` y los campos listados.\n3. Para preguntas generales de emisiones totales, usa preferentemente 'Total derivado del sector ganadero (emisiones CH4)' y/o '(emisiones N2O)' en lugar de sumar los desgloses, para evitar dobles conteos.\n4. NUNCA sumes valores con unidades distintas (Cabeza, kg y kilotones no son comparables). Si dudas, filtra siempre por `elemento` exacto.\n5. CH4 y N2O tampoco se suman directamente: si el usuario pide \"emisiones totales\" combinadas, muéstralas por separado o explica que se necesitarían factores de conversión a CO2-equivalente.\n6. Si el usuario usa un término que no coincide exactamente con los valores listados, usa el mapeo anterior o LIKE, p. ej. `WHERE elemento LIKE 'Fermentación entérica%'`.\n7. Limita los resultados con LIMIT cuando la consulta pueda devolver muchas filas.\n8. Presenta los resultados en español de forma clara: indica siempre la unidad, el rango de años y, si aporta, si los datos son oficiales (A) o estimados (E).\n\n## Alcance\n\n- Responde únicamente preguntas relacionadas con estos datos: existencias de ganado, emisiones CH4/N2O y gestión de estiércol por continente y año (1961-2023).\n- Si la pregunta NO está relacionada con el dataset, responde educadamente que solo puedes ayudar con consultas sobre datos ganaderos y de emisiones de la FAO, sin ejecutar ninguna consulta.\n- Nunca inventes datos: si la consulta no devuelve resultados, dilo claramente."
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 3.1,
+            "position": [
+                288,
+                0
+            ],
+            "id": "288a2fad-e97c-4ec6-9428-38df3a2932a3",
+            "name": "AI Agent"
+        },
+        {
+            "parameters": {
+                "model": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "gpt-5-mini"
+                },
+                "builtInTools": {},
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1.3,
+            "position": [
+                224,
+                224
+            ],
+            "id": "bf6a3f1b-50ed-4a6f-9427-f471f64eb005",
+            "name": "OpenAI Chat Model",
+            "credentials": {
+                "openAiApi": {
+                    "id": "DLgj82fWTe34rMok",
+                    "name": "OpenAI account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "sessionIdType": "customKey",
+                "sessionKey": "={{ $json.message.from.id }}"
+            },
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1.4,
+            "position": [
+                352,
+                224
+            ],
+            "id": "87f24004-bbd3-4c69-a297-bfca2ae04cab",
+            "name": "Simple Memory"
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "{{ $fromAI('sql_query') }}",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.mySqlTool",
+            "typeVersion": 2.5,
+            "position": [
+                480,
+                224
+            ],
+            "id": "4452563d-279f-45cd-92dd-94ff027094e7",
+            "name": "execute_query",
+            "credentials": {
+                "mySql": {
+                    "id": "L8lWQVTn3ZDvJNl5",
+                    "name": "MySQL account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+                "text": "={{ $json.output }}",
+                "additionalFields": {
+                    "appendAttribution": false,
+                    "parse_mode": "Markdown"
+                }
+            },
+            "type": "n8n-nodes-base.telegram",
+            "typeVersion": 1.2,
+            "position": [
+                640,
+                0
+            ],
+            "id": "f3534bc3-c9f0-4f66-8ae9-0a0a96f1c04a",
+            "name": "Send a text message",
+            "webhookId": "b5984d1b-2d2c-4da8-a762-167aba0444b5",
+            "credentials": {
+                "telegramApi": {
+                    "id": "ZShUpeIS0vRKAgRk",
+                    "name": "Telegram pececito_dory_bot"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Telegram Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Send a text message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Memory": {
+            "ai_memory": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_memory",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "execute_query": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "ee848aa7a3406b58920b4b6fe755d57f3b73189896f4bf9c3ed878cee317837e"
+    }
+}
