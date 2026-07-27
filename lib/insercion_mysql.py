@@ -30,7 +30,7 @@ def get_connection():
 
 
 #INFO DB para conectar con mySQL
-'''
+
 DB_CONFIG = {
     'host' : os.getenv('MYSQL_HOST'),
     'port' : 3306,
@@ -38,9 +38,10 @@ DB_CONFIG = {
     'password': os.getenv('MYSQL_PASSWORD'),
     'database': os.getenv('MYSQL_DATABASE')
 }
-'''
+
 
 # INFO DB para volcar los datos a Aiven (online)
+'''
 DB_CONFIG = {
     'host' : os.getenv('MYSQL_HOST_A'),
     'port' : os.getenv('MYSQL_PORT_A'),
@@ -48,7 +49,7 @@ DB_CONFIG = {
     'password': os.getenv('MYSQL_PASSWORD_A'),
     'database': os.getenv('MYSQL_DATABASE_A')
 }
-
+'''
 
 
 def vaciar_tabla():
